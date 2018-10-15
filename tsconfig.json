@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES2016",
+        "strict": true,
+        "inlineSourceMap": true,
+        "outDir": "dist/",
+        "types": [
+            "node"
+        ],
+
+    },
+    "include": [
+        "ts/**/*", "test/**/*"
+    ]
+}
