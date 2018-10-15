@@ -1,0 +1,18 @@
+{
+    "name": "oiltank-01",
+    "id": "123-344-001",
+    "state_db_name": "mystate",
+    "measurement": {
+        "lackPercent": 10,
+        "fullPercent": 90,
+        "baud_rate": 115200
+    },
+    "contract": {
+        "chain_ip": "",
+        "chain_port": "",
+        "oil_type": "",
+        "period_minute": 4320,
+        "max_retry": 3
+    },
+    "secret": ""
+}

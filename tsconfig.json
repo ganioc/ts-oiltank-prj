@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "ES2016",
+        "target": "ES2015",
         "strict": true,
         "inlineSourceMap": true,
         "outDir": "dist/",
