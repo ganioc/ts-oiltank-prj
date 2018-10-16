@@ -2,7 +2,7 @@ import { clinfo, clmark, clwarn, clerror } from './lib/formator'
 import { GlobalState } from './lib/state'
 import { Code } from './lib/code';
 
-const FILENAME = '[index.ts]'
+const FILENAME = '[index.ts]';
 
 clmark('='.repeat(60))
 clmark(' ___       ___       ___       ___       ___       ___')

@@ -2,7 +2,7 @@ import * as sqlite from 'sqlite3';
 sqlite.verbose();
 import { IfDbOptions, Db } from './db'
 import { Code } from '../code'
-import { clerror, cl } from '../formator';
+import { clerror, cl, clinfo } from '../formator';
 import { GLOBAL_STATE } from '../state'
 
 
@@ -13,17 +13,7 @@ export class StateDb extends Db {
         super(options);
         // this._state = GLOBAL_STATE.idle;
     }
-    openDb(): Promise<Code> {
-        return new Promise<Code>((resolve, reject) => {
-            this._db = new sqlite.Database(this._dbName, (err) => {
-                if (err) {
-                    resolve({ error: 'NOK', data: err })
-                } else {
-                    resolve({ error: 'OK', data: null })
-                }
-            });
-        })
-    }
+
     closeDb(): Promise<Code> {
         return new Promise<Code>((resolve, reject) => {
             this._db.close((err) => {
@@ -37,7 +27,7 @@ export class StateDb extends Db {
     }
     openTable(): Promise<Code> {
         return new Promise<Code>((resolve, reject) => {
-            this._db.run(`CREATE TABLE IF NOT EXISTS "state" ( "current_state" INTEGER NOT NULL UNIQUE ,"timestamp" TEXT NOT NULL );`,
+            this._db.run(`CREATE TABLE IF NOT EXISTS "state" ( "current_state" INTEGER NOT NULL UNIQUE ,"timestamp" VARCHAR(20) NOT NULL );`,
                 (err) => {
                     if (err) {
                         clerror('-'.repeat(40))
@@ -53,10 +43,11 @@ export class StateDb extends Db {
         return new Promise<Code>((resolve, reject) => {
             this._db.get(`SELECT * FROM "state";`, (err, row: any) => {
                 if (err) {
+                    clerror('Read table from state db fail');
                     resolve({ error: 'NOK', data: null });
                 }
                 else if (row !== undefined) {
-                    clerror('Read row get');
+                    clinfo('Read row from table succeed');
                     cl(row);
                     resolve({
                         error: 'OK', data: {

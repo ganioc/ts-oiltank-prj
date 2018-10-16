@@ -17,23 +17,28 @@ export interface IfDbOptions {
     name: string;
 }
 
-// export class DbManager {
-//     constructor() {
-
-//     }
-// }
-
 export abstract class Db {
-    protected _maxRow: number;
+    
     protected _dbName: string;
     protected _db: sqlite.Database;
 
     constructor(options: IfDbOptions) {
-        this._maxRow = MAX_ROW;
+        // this._maxRow = MAX_ROW;
         this._dbName = options.name;
         this._db = Object.create(null);
     }
-    abstract openDb(): Promise<Code>;
+    // abstract openDb(): Promise<Code>;
+    openDb(): Promise<Code> {
+        return new Promise<Code>((resolve, reject) => {
+            this._db = new sqlite.Database(this._dbName, (err) => {
+                if (err) {
+                    resolve({ error: 'NOK', data: err })
+                } else {
+                    resolve({ error: 'OK', data: null })
+                }
+            });
+        })
+    }
 }
 
 
