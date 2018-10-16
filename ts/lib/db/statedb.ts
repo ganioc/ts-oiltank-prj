@@ -56,7 +56,7 @@ export class StateDb extends Db {
                         }
                     })
                 } else {
-                    clerror('Undefined row');
+                    clerror('Undefined row, state table is empty');
                     resolve({ error: 'NOK', data: 'empty' });
                 }
             });

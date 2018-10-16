@@ -6,7 +6,7 @@ import { Code } from '../code';
  * 259200, 每个月的记录条数，大于这个数量，则对记录进行覆盖
  * 想一个算法进行覆盖;
  */
-const MAX_ROW = 30 * 24 * 60 * 6;
+// const MAX_ROW = 30 * 24 * 60 * 6;
 
 export interface IfTable {
     numMaxRow: number;
@@ -18,7 +18,7 @@ export interface IfDbOptions {
 }
 
 export abstract class Db {
-    
+
     protected _dbName: string;
     protected _db: sqlite.Database;
 

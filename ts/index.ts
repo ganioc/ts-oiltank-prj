@@ -20,7 +20,8 @@ clmark('='.repeat(60))
 let state = new GlobalState({
     stateDbName: 'mystate',
     measurmentDbName: 'mymeasurement',
-    logDbName: 'mylog'
+    logDbName: 'mylog',
+    maxMeasurement: 60 * 1,
 });
 
 async function main() {
@@ -31,7 +32,7 @@ async function main() {
     if (feedback.error !== 'OK') {
         throw new Error('Can not create/open database correctly');
     } else {
-        clmark('Database opened OK');
+        clmark(FILENAME, 'Database opened OK');
     }
 
     await state.checkNetwork();
@@ -68,6 +69,8 @@ async function main() {
     state.on('error', (err) => {
         clinfo('State = error')
     })
+
+    state.run();
 }
 
 main();

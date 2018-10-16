@@ -7,6 +7,7 @@ import { Code } from './code';
 
 const FILENAME = '[state.ts]';
 
+
 export enum GLOBAL_STATE {
     idle = 0,
     ready,
@@ -16,6 +17,7 @@ export interface globalStateOptions {
     stateDbName: string;
     measurmentDbName: string;
     logDbName: string;
+    maxMeasurement: number;
 }
 
 export class GlobalState extends events.EventEmitter {
@@ -35,6 +37,7 @@ export class GlobalState extends events.EventEmitter {
         });
         this._measurementDb = new MeasurementDb({
             name: this._options.measurmentDbName,
+            max_id: this._options.maxMeasurement,
         })
 
         this._bgTask = new BackgroundTask();
@@ -58,6 +61,19 @@ export class GlobalState extends events.EventEmitter {
             } else {
                 clinfo('MeasuremntDb open table OK')
             }
+
+            feedback = await this._measurementDb.readInfoTable();
+            if (feedback.error !== 'OK' && feedback.data === 'empty') {
+                // create the table
+                feedback = await this._measurementDb.insertInfoTable(0, 0, -1, -1, "");
+            } else {
+                clinfo('read measurement_info db table OK')
+            }
+
+            if (feedback.error !== 'OK') {
+                return resolve(feedback);
+            }
+
             resolve(feedback);
 
         });
@@ -115,22 +131,20 @@ export class GlobalState extends events.EventEmitter {
                 resolve(feedback);
                 return;
             } else {
-                clwarn('Check state db OK');
+                clwarn(FILENAME, 'Check state db OK');
             }
 
             // check measurementDb
-            // feedback = this.checkMeasurementDatabase();
-            // if (feedback.error !== 'OK') {
-            //     clerror('Measuremnt db check fail');
-            //     resolve(feedback);
-            //     return;
-            // } else {
-            //     clwarn('Check state db OK')
-            // }
-
+            feedback = await this.checkMeasurementDatabase();
+            if (feedback.error !== 'OK') {
+                clerror(FILENAME, 'Measuremnt db check fail');
+                resolve(feedback);
+                return;
+            } else {
+                clwarn(FILENAME, 'Check measurement db OK')
+            }
 
             resolve(feedback);
-
         });
 
     }
@@ -141,18 +155,28 @@ export class GlobalState extends events.EventEmitter {
 
     }
     run() {
+        clwarn('Running state is:', this._state);
 
+        switch (this._state) {
+            case GLOBAL_STATE.idle:
+                break;
+            case GLOBAL_STATE.ready:
+                break;
+            default:
+                throw new Error('Undefine state:' + this._state);
+                break;
+        }
     }
 }
 
-export class PersistentState {
-    constructor() {
+// export class PersistentState {
+//     constructor() {
 
-    }
-}
+//     }
+// }
 
-export class StateManager {
-    constructor() {
+// export class StateManager {
+//     constructor() {
 
-    }
-}
+//     }
+// }
