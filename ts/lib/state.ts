@@ -1,5 +1,5 @@
 import * as events from 'events';
-import { BackgroundTask } from './bgtask';
+import { BackgroundTask } from './task/bgtask';
 import { StateDb } from './db/statedb'
 import { MeasurementDb } from './db/measurementdb';
 import { cl, clerror, clwarn, clinfo } from './formator';
@@ -11,6 +11,9 @@ const FILENAME = '[state.ts]';
 export enum GLOBAL_STATE {
     idle = 0,
     ready,
+    shortage,
+    published,
+    confirmed,
 }
 
 export interface globalStateOptions {
@@ -18,14 +21,15 @@ export interface globalStateOptions {
     measurmentDbName: string;
     logDbName: string;
     maxMeasurement: number;
+    measurePeriod: number;
 }
 
 export class GlobalState extends events.EventEmitter {
     private _state: number;
     private _options: globalStateOptions;
-    private _bgTask: BackgroundTask;
     private _stateDb: StateDb;
     private _measurementDb: MeasurementDb;
+    private _task: BackgroundTask;
 
     constructor(options: globalStateOptions) {
         super();
@@ -39,8 +43,14 @@ export class GlobalState extends events.EventEmitter {
             name: this._options.measurmentDbName,
             max_id: this._options.maxMeasurement,
         })
+        this._task = new BackgroundTask({
+            state: this,
+            measurePeriod: this._options.measurePeriod,
+        });
 
-        this._bgTask = new BackgroundTask();
+    }
+    getState(): GLOBAL_STATE {
+        return this._state;
     }
     checkMeasurementDatabase() {
         return new Promise(async (resolve, reject) => {
@@ -149,34 +159,64 @@ export class GlobalState extends events.EventEmitter {
 
     }
     checkNetwork() {
+        return new Promise((resolve, reject) => {
 
+        });
     }
     checkTime() {
+        return new Promise((resolve, reject) => {
 
+        });
+    }
+    checkReady() {
+        let func = async () => {
+            await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve();
+                    console.log('idle out');
+                }, 5000)
+            });
+            this.emit('ready');
+        };
+        func();
     }
     run() {
         clwarn('Running state is:', this._state);
 
         switch (this._state) {
             case GLOBAL_STATE.idle:
+                this.checkReady();
+                this._task.switchToIdleTask();
                 break;
             case GLOBAL_STATE.ready:
+                this._task.switchToReadyTask();
+                break;
+            case GLOBAL_STATE.shortage:
+                this._task.switchToShortageTask();
+                break;
+            case GLOBAL_STATE.published:
+                this._task.switchToPublishedTask();
+                break;
+            case GLOBAL_STATE.confirmed:
+                this._task.switchToConfirmedTask();
                 break;
             default:
-                throw new Error('Undefine state:' + this._state);
-                break;
+                throw new Error(FILENAME + ' Undefine state:' + this._state);
         }
     }
+    switchState(newState: GLOBAL_STATE) {
+
+        clwarn("Switch state from", this._state, 'to ==>', newState);
+        this._state = newState;
+
+        // save state to state database
+        // 
+
+        this.run();
+        if (!this._task.getRunEnable()) {
+            this._task.run();
+        }
+    }
+
 }
 
-// export class PersistentState {
-//     constructor() {
-
-//     }
-// }
-
-// export class StateManager {
-//     constructor() {
-
-//     }
-// }
