@@ -31,6 +31,8 @@ export class GlobalState extends events.EventEmitter {
     private _measurementDb: MeasurementDb;
     private _task: BackgroundTask;
 
+
+
     constructor(options: globalStateOptions) {
         super();
         this._state = GLOBAL_STATE.idle;
@@ -48,6 +50,9 @@ export class GlobalState extends events.EventEmitter {
             measurePeriod: this._options.measurePeriod,
         });
 
+    }
+    public getMeasurementDb() : MeasurementDb{
+        return this._measurementDb;
     }
     getState(): GLOBAL_STATE {
         return this._state;

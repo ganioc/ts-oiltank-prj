@@ -22,7 +22,7 @@ let state = new GlobalState({
     stateDbName: 'mystate',
     measurmentDbName: 'mymeasurement',
     logDbName: 'mylog',
-    maxMeasurement: 60 * 1,
+    maxMeasurement: 20 * 1,
     measurePeriod: 6 * 1000,
 });
 

@@ -78,7 +78,7 @@ export class BackgroundTask {
     taskIdle(percent: number) {
 
     }
-    taskReady(percent: number) {
+    async taskReady(percent: number) {
         // 1st 判断是否缺油
         if (this._device.bShortage()) {
             // clerror('Device shortage of oil');
@@ -86,6 +86,20 @@ export class BackgroundTask {
         }
 
         // 2nd 将数据存入本地数据库
+        let feedback = await this._state.getMeasurementDb().readInfoTable();
+        if (feedback.error !== 'OK') {
+            clerror('read measuremtn_info table fail')
+            return;
+        }
+
+        feedback = await this._state.getMeasurementDb().updateMeasurementTableTransaction(feedback.data, percent);
+
+        if (feedback.error !== 'OK') {
+            clerror('save measurement table fail')
+            return;
+        } else {
+            clinfo('Save measurement succeed');
+        }
 
         // 3rd 将数据存放在网上
 
