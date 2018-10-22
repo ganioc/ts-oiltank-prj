@@ -37,6 +37,23 @@ export class StateDb extends Db {
                         resolve({ error: 'OK', data: null });
                     }
                 });
+        }).then((da) => {
+            return new Promise<Code>((resolve) => {
+                this._db.run(`CREATE TABLE IF NOT EXISTS "contract" ( "index" INTEGER NOT NULL ,"id"  INTEGER NOT NULL UNIQUE,"timestamp"  VARCHAR(20) NOT NULL, "account" VARCHAR(20), "type" VARCHAR(64), "finished" INTEGER NOT NULL ,"device" VARCHAR(64), "location" TEXT, "content" TEXT);`,
+                    (err) => {
+                        if (err) {
+                            clerror('-'.repeat(40))
+                            console.log(err);
+                            resolve({ error: 'NOK', data: err });
+                        } else {
+                            resolve({ error: 'OK', data: null })
+                        }
+                    });
+            });
+        }, (dae) => {
+            return new Promise<Code>((resolve) => {
+                resolve(dae);
+            });
         });
     }
     readTable(): Promise<Code> {
@@ -93,5 +110,14 @@ export class StateDb extends Db {
                 }
             });
         });
+    }
+    readContract() {
+
+    }
+    insertContract() {
+
+    }
+    updateContract() {
+
     }
 }

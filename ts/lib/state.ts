@@ -31,8 +31,6 @@ export class GlobalState extends events.EventEmitter {
     private _measurementDb: MeasurementDb;
     private _task: BackgroundTask;
 
-
-
     constructor(options: globalStateOptions) {
         super();
         this._state = GLOBAL_STATE.idle;
@@ -51,7 +49,7 @@ export class GlobalState extends events.EventEmitter {
         });
 
     }
-    public getMeasurementDb() : MeasurementDb{
+    public getMeasurementDb(): MeasurementDb {
         return this._measurementDb;
     }
     getState(): GLOBAL_STATE {
@@ -185,6 +183,18 @@ export class GlobalState extends events.EventEmitter {
         };
         func();
     }
+    /**
+     * 这里需要发布合约，如果发送成功还要反复检查之
+     */
+    checkShortage() {
+        let func = async () => {
+            await new Promise((resolve, reject) => {
+                resolve();
+            });
+
+        }
+        func();
+    }
     run() {
         clwarn('Running state is:', this._state);
 
@@ -197,6 +207,7 @@ export class GlobalState extends events.EventEmitter {
                 this._task.switchToReadyTask();
                 break;
             case GLOBAL_STATE.shortage:
+                this.checkShortage();
                 this._task.switchToShortageTask();
                 break;
             case GLOBAL_STATE.published:
@@ -209,15 +220,17 @@ export class GlobalState extends events.EventEmitter {
                 throw new Error(FILENAME + ' Undefine state:' + this._state);
         }
     }
-    switchState(newState: GLOBAL_STATE) {
+    async switchState(newState: GLOBAL_STATE) {
 
         clwarn("Switch state from", this._state, 'to ==>', newState);
         this._state = newState;
 
         // save state to state database
         // 
+        await this._stateDb.updateTable(newState, new Date().toLocaleString());
 
         this.run();
+
         if (!this._task.getRunEnable()) {
             this._task.run();
         }

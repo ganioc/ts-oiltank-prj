@@ -79,10 +79,11 @@ export class BackgroundTask {
 
     }
     async taskReady(percent: number) {
-        // 1st 判断是否缺油
+        // 1st 判断是否缺油, 这里的判断可以更加复杂一些！
         if (this._device.bShortage()) {
             // clerror('Device shortage of oil');
             this._state.emit('shortage', { percent: percent })
+            return;
         }
 
         // 2nd 将数据存入本地数据库
@@ -106,6 +107,7 @@ export class BackgroundTask {
 
     }
     taskShortage(percent: number) {
+
 
     }
     taskPublished(percent: number) {
