@@ -8,14 +8,11 @@ gulp.task('compile', () => {
         .js.pipe(gulp.dest('dist/'))
 })
 
-// gulp.task('copy', () => {
-//     gulp.src([
-//             './ts/config/defaultconfig.json',
-//             './ts/config/newnode1.json',
-//             './ts/config/newnode2.json',
-//             './ts/config/newnode3.json',
-//         ])
-//         .pipe(gulp.dest('./dist/config'))
-// })
+gulp.task('copy', () => {
+    gulp.src([
+            './ts/config/config.json',
+        ])
+        .pipe(gulp.dest('./dist/config'))
+})
 
-gulp.task('build', ['compile'])
+gulp.task('build', ['compile', 'copy'])

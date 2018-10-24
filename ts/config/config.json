@@ -1,6 +1,6 @@
 {
     "name": "oiltank-01",
-    "id": "123-344-001",
+    "id": "123344001",
     "state_db_name": "mystate",
     "measurement": {
         "lackPercent": 10,
@@ -14,5 +14,14 @@
         "period_minute": 4320,
         "max_retry": 3
     },
-    "secret": ""
+    "chain_config": {
+        "keyProvider": "5Jb1uWnvSArKZsWGyjGmMktdzS1aWEkNyEbQHZoDsNAEPDu3KJr",
+        "expireInSeconds": 60,
+        "broadcast": true,
+        "debug": false,
+        "sign": true,
+        "verbose": false,
+        "httpEndpoint": "http://40.73.34.219:8000",
+        "chainId": "c2242d8f6c7af8ef3682ceb2bafe96d88173d153fddef5f5616b3073deef26ed"
+    }
 }

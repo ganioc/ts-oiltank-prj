@@ -1,6 +1,8 @@
 import { clinfo, clmark, clerror, clwarn } from "../formator";
 import { GlobalState } from "../state";
 import { Device } from '../device/simulator'
+import { Chain } from "../net/chain";
+
 
 const FILENAME = '[bgtask.ts]';
 
@@ -15,6 +17,7 @@ export class BackgroundTask {
     private _device: Device;
     private _bRunEnable: boolean;
     private _task: (percent: number) => void;
+    private _chain: Chain;
 
     constructor(options: IfBackgroundTaskOptions) {
         this._state = options.state;
@@ -23,6 +26,7 @@ export class BackgroundTask {
         this._device.run();
         this._bRunEnable = false;
         this._task = Object.create(null);
+        this._chain = new Chain();
     }
     switchToIdleTask() {
         this._task = this.taskIdle;
@@ -103,7 +107,8 @@ export class BackgroundTask {
         }
 
         // 3rd 将数据存放在网上
-
+        // 就在这里把数据放在链上的数据合约上面去
+        await this._chain.sendData(1, percent);
 
     }
     taskShortage(percent: number) {

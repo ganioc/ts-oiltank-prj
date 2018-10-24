@@ -50,7 +50,7 @@ export class MeasurementDb extends Db {
     openTable(): Promise<Code> {
         return new Promise<Code>((resolve, reject) => {
             // open 1st table "measurement"
-            this._db.run(`CREATE TABLE IF NOT EXISTS "measurement" ( "id" INTEGER NOT NULL UNIQUE ,"timestamp" VARCHAR(20) NOT NULL , "percent" INTEGER NOT NULL);`,
+            this._db.run(`CREATE TABLE IF NOT EXISTS "measurement" ( "id" INTEGER NOT NULL UNIQUE ,"timestamp" VARCHAR(20) NOT NULL , "percent" REAL NOT NULL);`,
                 (err) => {
                     if (err) {
                         clerror('-'.repeat(40))
