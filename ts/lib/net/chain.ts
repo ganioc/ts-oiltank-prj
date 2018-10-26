@@ -32,7 +32,7 @@ export class Chain extends events.EventEmitter {
                             }
                         ],
                         data: {
-                            deviceid: 1,
+                            deviceid: this._devId,
                             type: type,
                             value: percent
                         }

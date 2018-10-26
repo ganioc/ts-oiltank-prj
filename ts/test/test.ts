@@ -6,7 +6,7 @@ const myconfig = (<any>config);
 // const defaultPrivateKey = "5Jb1uWnvSArKZsWGyjGmMktdzS1aWEkNyEbQHZoDsNAEPDu3KJr"; // testaccount1
 const Eos = require('eosjs')
 // let eos = Eos({ myconfig.chain_config.httpEndpoint, mychonfig.chain_config.chainId, keyProvider })
-
+let term = require('terminal-kit').terminal;
 
 const MAX_QUEUE_LEN = 8;
 
@@ -106,4 +106,26 @@ function testSend() {
     let chain = new Chain();
     chain.sendData(1, 55.5);
 }
-testSend();
+async function main() {
+    console.log('Start oiltank simulator');
+    term.bgBlue.clear();
+    term('Hello terminal-kit');
+    term.red('red')
+    term.bold.underline.red('mixed');
+    term.green("My name is %s, I'm %d.\n", 'Jack', 32);
+    term('The terminal size is %dx%d', term.width, term.height);
+    // cls();
+    term.moveTo(1, 1, 'Upper-left corner');
+    term.moveTo.cyan(2, 1, "My name is %s, I'm %d.\n", 'Jack', 32);
+    term.colorRgb(0x33, 0xff, 0x88, "This is teal!")
+    term.yellow("Width %d, Height %d \n", term.width, term.height);
+    term.moveTo(5, 19, 'Go go');
+    term('-'.repeat(50));
+    term.fullscreen(true);
+    term('\n');
+}
+// testSend();
+function testTerminal() {
+
+}
+testTerminal();

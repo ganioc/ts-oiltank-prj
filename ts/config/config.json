@@ -1,6 +1,6 @@
 {
     "name": "oiltank-01",
-    "id": "123344001",
+    "id": "1",
     "state_db_name": "mystate",
     "measurement": {
         "lackPercent": 10,

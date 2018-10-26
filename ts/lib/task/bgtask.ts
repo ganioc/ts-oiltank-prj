@@ -1,6 +1,7 @@
 import { clinfo, clmark, clerror, clwarn } from "../formator";
 import { GlobalState } from "../state";
-import { Device } from '../device/simulator'
+// import { Device } from '../device/simulator'
+import { Device } from '../device/simulator2'
 import { Chain } from "../net/chain";
 
 
@@ -66,9 +67,14 @@ export class BackgroundTask {
 
             let percent = this._device.getPercent();
 
-            clmark(FILENAME, 'read percent', percent);
+            clmark(FILENAME, 'read percent', percent.toFixed(2));
 
-            this._task(percent);
+            if (percent !== -1) {
+                // 收到传来的有效数据后，根据状态进行处理
+                // 否则不处理，等下一个6秒钟后的数据
+                this._task(percent);
+            }
+
 
             if (this._bRunEnable === true) {
                 mainTask();
