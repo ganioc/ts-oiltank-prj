@@ -15,7 +15,14 @@
         "max_retry": 3
     },
     "chain_config": {
+        "dataAccount": "testaccount1",
         "keyProvider": "5Jb1uWnvSArKZsWGyjGmMktdzS1aWEkNyEbQHZoDsNAEPDu3KJr",
+        "orderAccount": "testaccount2",
+        "keyProviderOrder": "5JcNuARZMyQ31W2qyTxjQGJo1BZ3aNsBsC5AiaZ5XV8cSdXyWaF",
+        "buyerAccount": "testbiguser1",
+        "keyProviderBuyer": "5JsrrJWQ8YHfqMj35DUCGZWCrKkaTDRopLXmDkE9k2ekR7N5hXT",
+        "sellerAccount": "testbiguser2",
+        "keyProviderSeller": "5JnazsRFFUo6DcAhgX7MLtto5hCR6Dsi9zoWmot5jKBFzGdi528",
         "expireInSeconds": 60,
         "broadcast": true,
         "debug": false,

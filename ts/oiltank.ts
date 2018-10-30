@@ -1,5 +1,6 @@
 import { deflateRaw } from "zlib";
 import * as net from 'net';
+import { Chain } from "./lib/net/chain";
 
 let term = require('terminal-kit').terminal;
 // 默认 80*24
@@ -24,6 +25,7 @@ const oilUpperLimit = 90;
 const oilLowerLimit = 15;
 
 let server: net.Server;
+let chain = new Chain();
 //  |_|
 function drawOilTank() {
     for (let i = 1; i < TANK_WIDTH; i++) {
@@ -70,6 +72,7 @@ function drawLogo() {
     term.yellow.moveTo(LOGO_LEFT, 5, "上限 " + oilUpperLimit);
     term.yellow.moveTo(LOGO_LEFT, 6, "下限 " + oilLowerLimit);
 
+    term.moveTo(LOGO_LEFT, WINDOW_HEIGHT - 5, "确认订单 - " + "ENTER键");
     term.moveTo(LOGO_LEFT, WINDOW_HEIGHT - 4, "端口     - " + SERVER_PORT);
     term.moveTo(LOGO_LEFT, WINDOW_HEIGHT - 3, "上 键    - 增加油料");
     term.moveTo(LOGO_LEFT, WINDOW_HEIGHT - 2, "下 键    - 减少油料");
@@ -153,7 +156,7 @@ function init() {
     drawOilTank();
     drawLogo();
 
-    term.on('key', function (name: string, matches: any, data: any) {
+    term.on('key', async function (name: string, matches: any, data: any) {
         writeLog("'key' event:" + name);
 
         // Detect CTRL-C and exit 'manually'
@@ -173,6 +176,14 @@ function init() {
                 oilpercent = 0;
             }
 
+        } else if (name === 'ENTER') {
+            // 发送确认
+            let result = await chain.checkOrder();
+            if (result.status === 'OK') {
+                writeLog('Confirm OK');
+            } else {
+                writeLog('Confirm fail');
+            }
         }
     });
 }

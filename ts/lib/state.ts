@@ -188,7 +188,8 @@ export class GlobalState extends events.EventEmitter {
      */
     checkShortage() {
         let func = async () => {
-            await new Promise((resolve, reject) => {
+            await new Promise(async (resolve, reject) => {
+                await this._task.sendOrder();
                 resolve();
             });
 

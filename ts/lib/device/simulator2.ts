@@ -10,7 +10,7 @@ export class Device {
     constructor() {
         this._client = Object.create(null);
         this._percent = -1;
-        this._shortageLimit = 15;
+        this._shortageLimit = 30;
     }
     run() {
         this._client = net.connect(

@@ -7,7 +7,8 @@
     "test": "node dist/test/test.js",
     "build": "gulp build",
     "start": "node dist/index.js",
-    "oiltank": "node dist/oiltank.js"
+    "oiltank": "node dist/oiltank.js",
+    "clean": "rm mystate mymeasurement"
   },
   "author": "",
   "license": "ISC",
