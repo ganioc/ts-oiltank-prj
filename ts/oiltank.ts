@@ -17,10 +17,10 @@ const LOGO_LEFT = 50;
 const LOGO_TOP = 10;
 const SERVER_PORT = 39000;
 
-let oilpercent: number = 100.0;
-let INTERVAL = 500; // 200 ms
-const oilChangeRate: number = 1.0;
-const oilUseRate: number = 0.01;
+let oilpercent: number = 85.0;
+let INTERVAL = 200; // 200 ms
+const oilChangeRate: number = 0.4;
+const oilUseRate: number = 0.0002;
 const oilUpperLimit = 90;
 const oilLowerLimit = 15;
 
