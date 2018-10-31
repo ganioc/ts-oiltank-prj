@@ -13,7 +13,8 @@ export enum GLOBAL_STATE {
     ready,
     shortage,
     published,
-    confirmed,
+    filling,
+    completed,
 }
 
 export interface globalStateOptions {
@@ -214,8 +215,11 @@ export class GlobalState extends events.EventEmitter {
             case GLOBAL_STATE.published:
                 this._task.switchToPublishedTask();
                 break;
-            case GLOBAL_STATE.confirmed:
-                this._task.switchToConfirmedTask();
+            case GLOBAL_STATE.filling:
+                this._task.switchToFillingTask();
+                break;
+            case GLOBAL_STATE.completed:
+                this._task.switchToCompletedTask();
                 break;
             default:
                 throw new Error(FILENAME + ' Undefine state:' + this._state);

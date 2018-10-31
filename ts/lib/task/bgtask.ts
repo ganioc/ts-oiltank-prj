@@ -3,6 +3,7 @@ import { GlobalState } from "../state";
 // import { Device } from '../device/simulator'
 import { Device } from '../device/simulator2'
 import { Chain } from "../net/chain";
+import { stat } from "fs";
 
 
 const FILENAME = '[bgtask.ts]';
@@ -18,6 +19,14 @@ export enum DATA_TYPE {
     end = 2,
 }
 
+let percentStack: number[] = [];
+let MAX_STACK_LENGTH = 4;
+
+export interface IfCheckFill {
+    status: boolean;
+    data: number;
+}
+
 export class BackgroundTask {
     private _state: GlobalState;
     private _measurePeriod: number;
@@ -27,6 +36,7 @@ export class BackgroundTask {
     private _chain: Chain;
     private _percent: number;
     private _orderWaitCounter: number;
+    private _completeCounter: number;
 
     constructor(options: IfBackgroundTaskOptions) {
         this._state = options.state;
@@ -38,6 +48,7 @@ export class BackgroundTask {
         this._chain = new Chain();
         this._percent = 0;
         this._orderWaitCounter = 0;
+        this._completeCounter = 0;
     }
     switchToIdleTask() {
         this._task = this.taskIdle;
@@ -51,8 +62,11 @@ export class BackgroundTask {
     switchToPublishedTask() {
         this._task = this.taskPublished;
     }
-    switchToConfirmedTask() {
-        this._task = this.taskConfirmed;
+    switchToFillingTask() {
+        this._task = this.taskFilling;
+    }
+    switchToCompletedTask() {
+        this._task = this.taskCompleted;
     }
     stop() {
         this._bRunEnable = false;
@@ -62,6 +76,61 @@ export class BackgroundTask {
     }
     getChain() {
         return this._chain;
+    }
+    /**
+ *  --++ 判断加油开始, 
+ *  + > 0.1
+ * 
+ * 
+ *  ++-- 判断加油结束，此时大于90
+ * 
+ */
+    bCheckFillBegin(): IfCheckFill {
+        if (percentStack.length < MAX_STACK_LENGTH) {
+            return { status: false, data: 0 };
+        }
+        let t0 = percentStack[MAX_STACK_LENGTH - 1];
+        let t1 = percentStack[MAX_STACK_LENGTH - 2];
+        let t2 = percentStack[MAX_STACK_LENGTH - 3];
+        let t3 = percentStack[MAX_STACK_LENGTH - 4];
+
+        console.log('t0:', t0);
+        console.log('t1', t1);
+        console.log('t2', t2);
+        console.log('t3', t3);
+        if (t2 < 15 && (t1 > 15 || t0 > 15)) {
+            clinfo('Fill detected');
+            return {
+                status: true,
+                data: t2
+            };
+        } else {
+            clinfo('Not detected');
+            return { status: false, data: 0 };
+        }
+    }
+    bCheckFillEnd(): IfCheckFill {
+        if (percentStack.length < MAX_STACK_LENGTH) {
+            return { status: false, data: 0 };
+        }
+        let t0 = percentStack[MAX_STACK_LENGTH - 1];
+        let t1 = percentStack[MAX_STACK_LENGTH - 2];
+        let t2 = percentStack[MAX_STACK_LENGTH - 3];
+        let t3 = percentStack[MAX_STACK_LENGTH - 4];
+
+        console.log('t0:', t0);
+        console.log('t1', t1);
+        console.log('t2', t2);
+        console.log('t3', t3);
+
+        if (t2 > 90 && (t1 - t2) < 0.2 && (t0 - t1) < 0.2) {
+            return {
+                status: true, data: t2
+            };
+        } else {
+            return { status: false, data: 0 };
+        }
+
     }
 
     run() {
@@ -84,6 +153,12 @@ export class BackgroundTask {
 
             if (percent !== -1) {
                 this._percent = percent;
+                // 放入 stack
+                percentStack.push(percent);
+                if (percentStack.length > MAX_STACK_LENGTH) {
+                    percentStack.shift();
+                }
+
                 // 收到传来的有效数据后，根据状态进行处理
                 // 否则不处理，等下一个6秒钟后的数据
                 this._task(percent);
@@ -137,9 +212,8 @@ export class BackgroundTask {
     }
     async taskShortage(percent: number) {
 
-
         // read order
-        let result = await this._chain.readOrder();
+        let result = await this._chain.readLatestOrder();
 
         if (result.status === 'OK') {
             console.log(result.data);
@@ -154,7 +228,7 @@ export class BackgroundTask {
             // 否则计数器加1
         }
         // 如果计数器大于10，重新进入ready状态
-        if (this._orderWaitCounter > 10) {
+        if (this._orderWaitCounter > 100) {
             this._state.emit('ready', { percent: percent })
             return;
         }
@@ -172,11 +246,62 @@ export class BackgroundTask {
         // 就在这里把数据放在链上的数据合约上面去
         await this._chain.sendData(DATA_TYPE.normal, percent);
 
+        let check = this.bCheckFillBegin();
+        if (check.status === true) {
+            await this._chain.sendData(DATA_TYPE.start, check.data);
+
+            this._state.emit('filling');
+        }
+
+        let order = await this._chain.readLatestOrder();
+        if (order.status === 'OK') {
+            console.log(order.data);
+            let status = order.data.status;
+
+            if (status === 'violated') {
+                this._state.emit('completed');
+                this._completeCounter = 0;
+            }
+        }
+
     }
-    async taskConfirmed(percent: number) {
+    async taskFilling(percent: number) {
+        // 就在这里把数据放在链上的数据合约上面去
+        await this._chain.sendData(DATA_TYPE.normal, percent);
 
+        let order = await this._chain.readLatestOrder();
+        if (order.status === 'OK') {
+            clmark('filling');
+            console.log(order.data);
 
+            let status = order.data.status;
 
+            if (status === 'confirmed') {
+                let check = this.bCheckFillEnd();
+                if (check.status === true) {
+                    await this._chain.sendData(DATA_TYPE.end, check.data);
+                }
+
+            } else if (status === 'violated') {
+                this._state.emit('completed');
+                this._completeCounter = 0;
+            } else if (status === 'completed') {
+                this._state.emit('completed');
+                this._completeCounter = 0;
+            } else if (status === 'broken') {
+                this._state.emit('completed');
+                this._completeCounter = 0;
+            }
+        }
+    }
+    async taskCompleted(percent: number) {
+        // 判断是否
+        this._completeCounter++;
+        clerror('Oiltank filling completed successfully!');
+
+        if (this._completeCounter > 5) {
+            this._state.emit('ready');
+        }
     }
     sendOrder() {
         return new Promise(async (resolve, reject) => {
@@ -187,5 +312,5 @@ export class BackgroundTask {
             resolve('OK');
         });
     }
-    
+
 }

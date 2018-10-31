@@ -62,9 +62,13 @@ async function main() {
         clinfo('State = published')
         state.switchState(GLOBAL_STATE.published);
     })
-    state.on('confirmed', () => {
-        clinfo('State = confirmed')
-        state.switchState(GLOBAL_STATE.confirmed);
+    state.on('filling', ()=>{
+        clinfo('State = filling')
+        state.switchState(GLOBAL_STATE.filling);
+    });
+    state.on('completed', () => {
+        clinfo('State = completed')
+        state.switchState(GLOBAL_STATE.completed);
     })
     state.on('error', (err) => {
         clinfo('State = error')

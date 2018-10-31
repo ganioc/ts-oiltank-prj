@@ -7,10 +7,12 @@ export class Device {
     private _client: net.Socket;
     private _percent: number;
     private _shortageLimit: number;
+    private _overLimit: number;
     constructor() {
         this._client = Object.create(null);
         this._percent = -1;
-        this._shortageLimit = 30;
+        this._shortageLimit = 15;
+        this._overLimit = 90;
     }
     run() {
         this._client = net.connect(
@@ -48,6 +50,12 @@ export class Device {
     }
     bShortage(): boolean {
         if (this._percent <= this._shortageLimit) {
+            return true;
+        }
+        return false;
+    }
+    bOver(): boolean {
+        if (this._percent >= this._overLimit) {
             return true;
         }
         return false;

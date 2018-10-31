@@ -4,6 +4,8 @@ import { clmark, cl, clerror, clinfo } from '../formator';
 
 const Eos = require('eosjs');
 
+const MAX_ORDER_NUM = 1000;
+
 const myconfig = (<any>config);
 
 export interface IfOrder {
@@ -136,6 +138,7 @@ export class Chain extends events.EventEmitter {
                 code: 'testaccount2',
                 scope: 'testaccount2',
                 table: 'orders',
+                limit: MAX_ORDER_NUM,
                 json: true,
             }).then((res: any) => {
                 console.log('readData table');
@@ -159,6 +162,7 @@ export class Chain extends events.EventEmitter {
                 code: 'testaccount2',
                 scope: 'testaccount2',
                 table: 'orders',
+                limit: MAX_ORDER_NUM,
                 json: true,
             }).then((res: any) => {
                 // console.log('readData table');
