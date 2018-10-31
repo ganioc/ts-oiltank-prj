@@ -17,12 +17,14 @@ const LOGO_LEFT = 50;
 const LOGO_TOP = 10;
 const SERVER_PORT = 39000;
 
+let oldOilHeight: number = 0;
 let oilpercent: number = 85.0;
 let INTERVAL = 200; // 200 ms
 const oilChangeRate: number = 0.4;
 const oilUseRate: number = 0.0002;
 const oilUpperLimit = 90;
 const oilLowerLimit = 15;
+
 
 let server: net.Server;
 let chain = new Chain();
@@ -39,6 +41,34 @@ function drawOilTank() {
     for (let i = 1; i < TANK_WIDTH; i++) {
         term.moveTo(TANK_LEFT + i, OIL_BOTTOM + 1, "-");
     }
+}
+function newDrawOil() {
+    let oilHeight: number = Math.round(TANK_HEIGHT * oilpercent / 100);
+    if (oilHeight === oldOilHeight) {
+        return;
+        // No need to draw oil
+    }
+    let delta = oilHeight - oldOilHeight;
+    for (let i = 0; i < oilHeight; i++) {
+        let y = OIL_BOTTOM - i;
+        for (let j = TANK_LEFT + 1; j < TANK_LEFT + TANK_WIDTH; j++) {
+            if (oilpercent >= oilUpperLimit) {
+                term.moveTo.bgGreen(j, y, " ");
+            } else if (oilpercent <= oilLowerLimit) {
+                term.moveTo.bgRed(j, y, " ");
+            } else {
+                term.moveTo.bgBlue(j, y, " ");
+            }
+
+        }
+    }
+    for (let i = oilHeight; i < TANK_HEIGHT; i++) {
+        let y = OIL_BOTTOM - i;
+        for (let j = TANK_LEFT + 1; j < TANK_LEFT + TANK_WIDTH; j++) {
+            term.moveTo(j, y, " ");
+        }
+    }
+    oldOilHeight = oilHeight;
 }
 function drawOil() {
 
@@ -93,7 +123,8 @@ function draw() {
 
 
     // drawOilTank();
-    drawOil();
+    // drawOil();
+    newDrawOil();
 
     // drawLogo();
 

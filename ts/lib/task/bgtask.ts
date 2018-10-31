@@ -299,7 +299,7 @@ export class BackgroundTask {
         this._completeCounter++;
         clerror('Oiltank filling completed successfully!');
 
-        if (this._completeCounter > 3) {
+        if (this._completeCounter > 2) {
             this._state.emit('ready');
         }
     }
