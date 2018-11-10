@@ -140,6 +140,7 @@ export class BackgroundTask {
         this._bRunEnable = true;
 
         let mainTask = async () => {
+            clwarn('To wait,');
             await new Promise(async (resolve, reject) => {
                 setTimeout(() => {
                     clinfo('To delay ', this._measurePeriod / 1000, 'seconds');
@@ -192,6 +193,8 @@ export class BackgroundTask {
         if (feedback.error !== 'OK') {
             clerror('read measuremtn_info table fail')
             return;
+        } else {
+            clinfo('Save to db done');
         }
 
         feedback = await this._state.getMeasurementDb().updateMeasurementTableTransaction(feedback.data, percent);
@@ -205,15 +208,26 @@ export class BackgroundTask {
 
         // 3rd 将数据存放在网上
         // 就在这里把数据放在链上的数据合约上面去
-        await this._chain.sendData(1, percent);
+        try {
+            await this._chain.sendData(1, percent);
+        } catch (e) {
+            clmark('chain sendData');
+            clerror(e);
+        }
 
+        clmark('end of save to cloud');
         // await this._chain.readData();
 
     }
     async taskShortage(percent: number) {
 
         // read order
-        let result = await this._chain.readLatestOrder();
+        let result: any;
+        try {
+            result = await this._chain.readLatestOrder();
+        } catch (e) {
+            clerror(e);
+        }
 
         if (result.status === 'OK') {
             console.log(result.data);
@@ -234,8 +248,12 @@ export class BackgroundTask {
         }
 
         // 就在这里把数据放在链上的数据合约上面去
-        await this._chain.sendData(DATA_TYPE.normal, percent);
-
+        try {
+            await this._chain.sendData(DATA_TYPE.normal, percent);
+        } catch (e) {
+            clmark('Send data to cloud');
+            clerror(e);
+        }
         // await this._chain.sendOrder(100.0 - percent);
 
         // delay some time
@@ -244,7 +262,12 @@ export class BackgroundTask {
     }
     async taskPublished(percent: number) {
         // 就在这里把数据放在链上的数据合约上面去
-        await this._chain.sendData(DATA_TYPE.normal, percent);
+        try {
+            await this._chain.sendData(DATA_TYPE.normal, percent);
+        } catch (e) {
+            clerror(e);
+        }
+
 
         let check = this.bCheckFillBegin();
         if (check.status === true) {
@@ -252,8 +275,13 @@ export class BackgroundTask {
 
             this._state.emit('filling');
         }
+        let order: any;
+        try {
+            order = await this._chain.readLatestOrder();
+        } catch (e) {
+            clerror(e);
+        }
 
-        let order = await this._chain.readLatestOrder();
         if (order.status === 'OK') {
             console.log(order.data);
             let status = order.data.status;
@@ -267,9 +295,19 @@ export class BackgroundTask {
     }
     async taskFilling(percent: number) {
         // 就在这里把数据放在链上的数据合约上面去
-        await this._chain.sendData(DATA_TYPE.normal, percent);
+        try {
+            await this._chain.sendData(DATA_TYPE.normal, percent);
+        } catch (e) {
+            clerror(e);
+        }
 
-        let order = await this._chain.readLatestOrder();
+        let order: any;
+        try {
+            order = await this._chain.readLatestOrder();
+        } catch (e) {
+            clerror(e);
+        }
+
         if (order.status === 'OK') {
             clmark('filling');
             console.log(order.data);

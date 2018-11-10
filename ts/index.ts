@@ -23,7 +23,7 @@ let state = new GlobalState({
     measurmentDbName: 'mymeasurement',
     logDbName: 'mylog',
     maxMeasurement: 20 * 1,
-    measurePeriod: 6 * 1000,
+    measurePeriod: 1 * 1000,
 });
 
 // 运行的背景任务
@@ -62,7 +62,7 @@ async function main() {
         clinfo('State = published')
         state.switchState(GLOBAL_STATE.published);
     })
-    state.on('filling', ()=>{
+    state.on('filling', () => {
         clinfo('State = filling')
         state.switchState(GLOBAL_STATE.filling);
     });

@@ -1,6 +1,7 @@
 import { deflateRaw } from "zlib";
 import * as net from 'net';
 import { Chain } from "./lib/net/chain";
+import { STX, ETX } from "./lib/formator";
 
 let term = require('terminal-kit').terminal;
 // 默认 80*24
@@ -154,7 +155,12 @@ function startServer() {
             });
             if (bWorking === true) {
                 try {
-                    connection.write(JSON.stringify({ data: oilpercent }));
+                    let contentBuffer = Buffer.from(JSON.stringify({ data: oilpercent }));
+                    connection.write(Buffer.concat([
+                        Buffer.from([STX]),
+                        contentBuffer,
+                        Buffer.from([ETX])
+                    ]));
                     run();
                 } catch (e) {
 
@@ -165,9 +171,10 @@ function startServer() {
 
         run();
     });
-    server.listen({ port: SERVER_PORT, host: 'localhost' }, () => { });
+    server.listen({ port: SERVER_PORT, host: '0.0.0.0' }, () => { });
     server.on('error', (err: any) => {
         // writeLog(err);
+        console.log(err);
     });
     server.on('close', () => {
         writeLog('Restart server');

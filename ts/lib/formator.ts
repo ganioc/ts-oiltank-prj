@@ -6,6 +6,9 @@ const COLOR_ERROR = colors.red;
 const COLOR_INFO = colors.green;
 const COLOR_MARK = colors.blue;
 
+export const STX: number = 0x02;
+export const ETX: number = 0x03;
+
 export const strLoopObject = (obj: object): string => {
     const SPACING = 2;
     const CH_SPACING = ' ';
