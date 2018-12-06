@@ -2,7 +2,7 @@ import * as net from 'net';
 import { clmark, clerror, STX, ETX, clinfo } from '../formator';
 
 const FILENAME = '[simulator2.ts]';
-const IP = '192.168.1.102';
+const IP = '192.168.1.100';
 const PORT = 39000;
 
 export class Device {

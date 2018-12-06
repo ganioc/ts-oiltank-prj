@@ -77,6 +77,9 @@ export class Chain extends events.EventEmitter {
                 // console.log(result);
                 // cl(result);
                 resolve('OK');
+            }, (err: any) => {
+                console.log(err);
+                resolve('OK');
             });
         });
 

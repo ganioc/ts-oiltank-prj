@@ -23,7 +23,7 @@ let state = new GlobalState({
     measurmentDbName: 'mymeasurement',
     logDbName: 'mylog',
     maxMeasurement: 20 * 1,
-    measurePeriod: 6 * 1000,
+    measurePeriod: 2 * 1000,
 });
 
 // 运行的背景任务

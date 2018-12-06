@@ -208,7 +208,7 @@ export class BackgroundTask {
                 resolve('OK');
                 return;
             } else {
-                clinfo('Save measurement succeed');
+                clinfo('Save measurement succeed!');
             }
 
             // 3rd 将数据存放在网上
@@ -279,17 +279,21 @@ export class BackgroundTask {
 
 
             let check = this.bCheckFillBegin();
+            clinfo('Send data -->');
             if (check.status === true) {
                 await this._chain.sendData(DATA_TYPE.start, check.data);
 
                 this._state.emit('filling');
             }
+
+            clinfo('To read order -->');
             let order: any;
             try {
                 order = await this._chain.readLatestOrder();
             } catch (e) {
                 clerror(e);
             }
+            clinfo('Read order done');
 
             if (order.status === 'OK') {
                 console.log(order.data);
@@ -306,6 +310,7 @@ export class BackgroundTask {
     async taskFilling(percent: number) {
         return new Promise(async (resolve, reject) => {
             // 就在这里把数据放在链上的数据合约上面去
+            clinfo('fillting mode');
             try {
                 await this._chain.sendData(DATA_TYPE.normal, percent);
             } catch (e) {

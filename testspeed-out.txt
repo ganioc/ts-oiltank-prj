@@ -1,0 +1,52 @@
+
+
+start --> 2018-12-6 09:17:34
+Start of signHash 2018-12-6 09:17:34
+nonce: 0 2018-12-6 09:17:34
+begin sign --> 2018-12-6 09:17:34
+end sign  2018-12-6 09:17:39
+after toDER() 2018-12-6 09:17:39
+nonce: 1 2018-12-6 09:17:39
+begin sign --> 2018-12-6 09:17:39
+end sign  2018-12-6 09:17:41
+after toDER() 2018-12-6 09:17:41
+before calcPubKeyRecoveryParam 2018-12-6 09:17:41
+0 '-time calc' '2018-12-6 09:17:43'
+Start recover --> 2018-12-6 09:17:43
+Start multiply 2018-12-6 09:17:43
+Start negate() 2018-12-6 09:17:45
+start modInverse 2018-12-6 09:17:45
+start multiplyTwo 2018-12-6 09:17:45
+start validate 2018-12-6 09:17:54
+n 2018-12-6 09:17:55
+time finished 2018-12-6 09:17:55
+1 '-time calc' '2018-12-6 09:17:55'
+Start recover --> 2018-12-6 09:17:55
+Start multiply 2018-12-6 09:17:55
+Start negate() 2018-12-6 09:17:56
+start modInverse 2018-12-6 09:17:56
+start multiplyTwo 2018-12-6 09:17:56
+start validate 2018-12-6 09:17:59
+n 2018-12-6 09:18:00
+time finished 2018-12-6 09:18:00
+Qprime done 2018-12-6 09:18:00
+after calcPubKeyRecoveryParam 2018-12-6 09:18:00
+End of signHash 2018-12-6 09:18:00
+end --> 2018-12-6 09:18:00
+
+
+input: I'm good
+output: SIG_K1_Kd3rcMZEPuwwuM3kXCYBCkc73NNq6PSLRb6nq6jiEDKc9jumPLg844YX9mHHVR1Z8x4NBdw8unr18V13wRxJ12jvs7wthZ
+
+
+
+Start using c to compute sha256, and then sign with secp256k1 algorithm, it's fast--> 2018-12-6 09:18:00
+data buffer: <Buffer 60 25 00 cc 9e 29 62 d4 60 48 ff a4 fe e7 44 c1 17 6f 1f 1c 6e 45 09 8d 0a b7 53 2b 3f ca d9 35>
+privateKey buffer: 32
+<Buffer 59 08 6b 3b 43 54 05 54 c4 13 94 a2 b9 a0 2b 1b 24 2c 96 94 0a 7c 5c 23 1a 09 7b 5a a6 e8 5a 74>
+signature length: 64
+<Buffer f0 c6 c6 5f 02 18 0b e6 2d 58 45 08 63 9d 62 e2 d1 97 d6 72 96 72 fb a0 b7 66 6e 41 79 d6 38 ba 54 a5 a3 bc 99 d3 76 e2 d8 db 09 49 ff f4 54 9d 6c 20 ... >
+End using c 2018-12-6 09:18:00
+
+
+
